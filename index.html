@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Form</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/vue.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Sortable.min.js"></script>
+</head>
+
+<body>
+
+
+    <div id="app" v-cloak>
+
+        <main>
+
+            <aside>
+
+                <!--form adi-->
+                <article class="mb-2">
+                    <input name="" type="text" placeholder="Form Başlığı" class="form-control" v-model="formName" />
+                </article>
+
+                <button class="btn btn-primary w-100 mb-3" type="button" @click="formTypeBtn()"
+                    v-show="addFormType">Soru Tipi Ekle</button>
+
+                <!--hangi form elementi eklenecek-->
+                <article class="mb-2" v-show="formTypes">
+                    <button type="button" class="btn btn-outline-primary w-100 mb-2 btn-formElement"
+                        :class="{ active: activeFormId === 1}" @click="formElementBtn(1)">Textbox</button>
+                    <button type="button" class="btn btn-outline-secondary w-100 mb-2 btn-formElement"
+                        :class="{ active: activeFormId === 2}" @click="formElementBtn(2)">TextArea</button>
+                    <button type="button" class="btn btn-outline-success w-100 mb-2 btn-formElement"
+                        :class="{ active: activeFormId === 3}" @click="formElementBtn(3)">Radio
+                        Button</button>
+                    <button type="button" class="btn btn-outline-danger w-100 mb-2 btn-formElement"
+                        :class="{ active: activeFormId === 4}" @click="formElementBtn(4)">Checkbox
+                        Button</button>
+                </article>
+
+                <!-- form elementleri -->
+                <section>
+
+                    <article v-show="activeFormId" class="mb-3">
+                        <input type="text" class="form-control" placeholder="Başlık Ekle" id="addTitle"
+                            autocomplete="off" />
+                    </article>
+
+                    <article v-show="activeFormId === 3" class="mb-2">
+                        <input type="text" class="form-control mb-1 form-control-radio" placeholder="Radio Element Adı"
+                            autocomplete="off" v-for="(item, index) in checkSize" :key="index" />
+                        <button type="button" class="btn btn-outline-success mt-1" @click="moreCheckAdd()">Daha fazla
+                            ekle</button>
+                        <button type="button" class="btn btn-outline-danger mt-1" v-show="checkSize>1"
+                            @click="moreCheckDelete()">Sil</button>
+                    </article>
+
+                    <article v-show="activeFormId === 4" class="mb-2">
+                        <input type="text" class="form-control mb-1 form-control-checkbox"
+                            placeholder="Checkbox Element Adı" autocomplete="off" v-for="(item, index) in checkSize"
+                            :key="index" />
+                        <button type="button" class="btn btn-outline-success mt-1" @click="moreCheckAdd()">Daha fazla
+                            ekle</button>
+                        <button type="button" class="btn btn-outline-danger mt-1" v-show="checkSize>1"
+                            @click="moreCheckDelete()">Sil</button>
+                    </article>
+
+                    <article v-show="activeFormId" class="mb-3">
+                        <h6>Zorunlu mu?</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="isRequire" id="isRequireYes"
+                                value="option1" checked>
+                            <label class="form-check-label" for="isRequireYes">Evet</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="isRequire" id="isRequireNo"
+                                value="option2">
+                            <label class="form-check-label" for="isRequireNo">Hayır</label>
+                        </div>
+                    </article>
+
+                </section>
+
+                <article class="mb-2" v-show="datas.length>0">
+                    <input name="" type="text" placeholder="Gönder Button İsmi" class="form-control"
+                        v-model="sendName" />
+                </article>
+
+                <button class="btn btn-success w-100 mb-2 mt-4" type="button" @click="formTypeAdd()"
+                    v-show="formTypesOk">Ekle</button>
+
+            </aside>
+
+            <section class="wrapper">
+
+                <div class="mb-4 d-flex align-items-center justify-content-between">
+                    <h2 class="mb-0">
+                        {{formName}}
+                    </h2>
+                    <div>
+                        <button type="button" class="btn btn-info" @click="viewer = true">
+                            <i class="handle d-block"></i>
+                        </button>
+                        <button type="button" class="btn btn-warning" @click="viewer = false">
+                            <i class="handle handle-column d-block"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form v-show="datas.length>0">
+                    <div id="dragArea" class="item-wrapper" :class="viewer ? 'row' : 'column'">
+                        <div class="mb-3 item" v-for="(item, index) in datas" :key="index" :data-id="item.id">
+
+                            <!--label-->
+                            <label for="" class="form-label d-flex align-items-center">
+                                <i class="handle me-4 opt"></i>
+                                {{item.title}}
+                                <i class="pencil-fill me-4 ms-5 opt" @click="editItem(item.id)"></i>
+                                <i class="x-circle me-4 opt" @click="deleteItem(item.id)"></i>
+                            </label>
+
+                            <!--textbox-->
+                            <input :name="item.title" :type=item.type class="form-control" v-if="item.type==='text'"
+                                :id="item.id" :required="item.require ? true : false" />
+
+                            <!--textarea-->
+                            <textarea :name="item.title" class="form-control" v-if="item.type==='textarea'"
+                                :id="item.id" :required="item.require ? true : false"></textarea>
+
+                            <!--radiobutton-->
+                            <div class="form-check form-check-inline" v-if="item.type==='radio'"
+                                v-for="(item2, index2) in item.data" :key="index2">
+                                <input class="form-check-input" :type="item.type" :id="'str' + item.id + '_' + index2"
+                                    :name="'str' + item.id" :value="item2" :required="item.require ? true : false">
+                                <label class="form-check-label" :for="'str' + item.id + '_' + index2">
+                                    {{item2}}
+                                </label>
+                            </div>
+
+                            <!--checkbox-->
+                            <div class="form-check form-check-inline" v-if="item.type==='checkbox'"
+                                v-for="(item2, index2) in item.data" :key="index2">
+                                <input class="form-check-input" :type="item.type" :id="'str' + item.id + '_' + index2"
+                                    :name="'str' + item.id" :value="item2" :required="item.require ? true : false">
+                                <label class="form-check-label" :for="'str' + item.id + '_' + index2">
+                                    {{item2}}
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" v-show="datas.length>0">
+                        {{sendName}}
+                    </button>
+                </form>
+
+            </section>
+
+        </main>
+
+
+        <!-- Modal -->
+        <div class="modal fade show" :class="{ active: editModalVisible}" id="editModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Düzenle</h5>
+                        <button type="button" class="btn-close" @click="editModalClose()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" class="form-control" v-model="editTxt" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="editModalClose()">Kapat</button>
+                        <button type="button" class="btn btn-primary" @click="saveEditInput(editTxt)">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="js/main.js?v=2"></script>
+</body>
+
+</html>

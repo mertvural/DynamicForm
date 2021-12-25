@@ -1,0 +1,20 @@
+[v-cloak] {display:none}
+html {font-size: 16px;background-color: #fff}
+html, a {color:#202124}
+a {text-decoration: none;}
+#app aside {width:300px;position: fixed;left:0;top:0;height: 100%;background-color:rgb(240, 235, 248);padding:2rem 1rem;border-right: 1px solid #dadce0;max-height: 100%;overflow: auto;}
+#app section.wrapper {padding:2rem 2rem 2rem calc(2rem + 300px)}
+:focus {outline: none;}
+textarea {resize: none;}
+.form-control:focus {color: #212529;background-color: #fff;border-color: #86b7fe;outline: 0;box-shadow: 0 0 0 0.1rem rgb(103, 58, 183)}
+.wrapper form:not(:empty) {border: solid #f8f9fa;padding: 2rem;}
+input+label {cursor: pointer;}
+.handle, .x-circle, .pencil-fill {background-size: 100% !important;display: inline-block;width:20px;height: 20px;cursor: pointer;display: none;}
+.handle {background: url(../images/arrows-expand.svg) no-repeat}
+.x-circle {background: url(../images/x-circle.svg) no-repeat}
+.pencil-fill {background: url(../images/pencil.svg) no-repeat}
+.item:hover .opt {display: block;}
+.opt:hover {opacity: .7;}
+.modal.active {display: block;background: #000000a1;}
+.item-wrapper.column {display: grid;grid-gap: 20px;grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));}
+.item-wrapper.column .handle, .handle-column {transform: rotate(90deg);}
